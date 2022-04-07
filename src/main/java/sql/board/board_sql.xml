@@ -167,6 +167,9 @@
 		      	,COUNT(*) OVER() AS TOTAL_CNT
 			FROM
 				BOARD 
+			<if test="searchInput != null and searchInput != ''">
+			where BOARD_TITLE like '%'||#{searchInput}||'%' or BOARD_COMMENT like '%'||#{searchInput}||'%'
+			</if>
 			<if test="hiddenValue != null and hiddenValue != ''">
 			where BOARD_TYPE IN
 				<foreach collection="hiddenValue" item="arr" open="(" close=")" separator=",">
@@ -187,5 +190,12 @@
 				<foreach collection="array" item="arr" open="(" close=")" separator=",">
  					#{arr}
 				</foreach>		
+    </select>
+    <select id="boardTotalOfKeyword" resultType="Integer">
+		  SELECT
+		      	COUNT(*) AS TOTAL_CNT
+			FROM
+				BOARD 
+				where BOARD_TITLE like '%'||#{searchInput}||'%' or BOARD_COMMENT like '%'||#{searchInput}||'%'
     </select>
 </mapper>

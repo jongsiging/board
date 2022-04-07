@@ -97,6 +97,16 @@ public class BoardDaoImpl implements BoardDao{
 		// TODO Auto-generated method stub
 		return sqlSession.insert("board.boardInsert", param);
 	}
+	@Override
+	public List<BoardVo> SelectBoardListOfKeyword(Map<String, Object> map) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectList("board.boardList",map);
+	}
+	@Override
+	public int selectBoardCntOfKeyword(String searchInput) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectOne("board.boardTotalOfKeyword",searchInput);
+	}
 	
 	
 }

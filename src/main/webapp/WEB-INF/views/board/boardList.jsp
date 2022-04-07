@@ -11,13 +11,16 @@
 <script type="text/javascript">
 
 	$j(document).ready(function(){
+		
+		//체크 박스 불러오기
 		$j.getJSON("/board/boardType.do", function(data) {
 			for(var i=0; i<data.length; i++){
 				var msg = "<input class='normal' type='checkbox' name='boardType' value="+data[i].codeId+">"+data[i].codeName;
 				$j(".checkbox").append(msg);
 			}
 		});
-
+		
+		//엑셀 출력
 		$j("#excel").on("click",function(){
 			var chkArray = new Array();
 			$j('input:checkbox[name=boardType]:checked').each(function() {
@@ -30,6 +33,59 @@
 	       	location.href = "/board/excel.do?pageNo=1&hiddenValue="+hiddenValue;
 		});
 		
+		//키워드 검색
+		$j("#searchButton").on("click",function(){
+			
+			var searchInput = $j('#searchInput').val();
+			
+			if(searchInput == "" || searchInput == null){
+				alert("키워드를 입력하세요.")
+				return false;
+			};
+			
+			$j.ajax({
+				type : "get",
+				url : "/board/boardListOfKeyword.do",
+				dataType : "text",
+				data : {
+					"pageNo" : 1,
+					"searchInput" : searchInput
+				},
+				success : function(data){
+					$j("#boardTable").html("");
+					data = JSON.parse(data);
+					
+					var msg1 = a();
+					$j("#boardTable").append(msg1);
+					for(var i=0;i<data.boardList.length; i++){
+						var codeName = data.boardList[i].codeName;
+						var boardNum = data.boardList[i].boardNum;
+						var boardType = data.boardList[i].boardType;
+						var pageNo = data.pageNo;
+						var boardTitle = data.boardList[i].boardTitle;
+						var msg2 = b(codeName,boardNum,boardType,pageNo,boardTitle);
+						$j("#boardTable").append(msg2);
+					}
+					
+					$j("#totalpage").html("");
+					var totalpage = data.totalpage;
+					for(var i=1; i<totalpage+1; i++){
+						var msg1 = "<a class='pageOfKeyword' href='#'>"+i+"</a> "
+						$j("#totalpage").append(msg1);
+					}
+					
+					
+					$j("#totalCnt").html("");
+					var totalCnt = data.totalCnt;
+					var msg2 = "total : "+totalCnt;
+					$j("#totalCnt").append(msg2);
+				}
+				
+			});
+			
+		});
+		
+		// 체크박스 조회
 		$j("#search").on("click",function(){
 			var chkArray = new Array();
 			$j('input:checkbox[name=boardType]:checked').each(function() {
@@ -91,6 +147,7 @@
 			
 		});
 		
+		//체크박스 전체 선택시
 		$j(".checkbox").on("click", "#check_all", function () {
 			  var checked = $j(this).is(":checked");
 				
@@ -101,6 +158,7 @@
 			  }
 			});
 		
+		//일반 체크박스 선택시
 		$j(".checkbox").on("click", ".normal", function() {
 			  var checked = $j(this).is(":checked");
 
@@ -109,6 +167,7 @@
 			  }
 		});
 		
+		// 체크박스 전부 선택시
 		$j(".checkbox").on("click", function() { 
 			   if($j('input:checkbox[name=boardType]:checked').length > 3){ 
 			       $j('#check_all').prop("checked",true); 
@@ -117,7 +176,8 @@
 			    } 
 		});
 	});
-
+	
+	//조회된 리스트에 페이지 선택 시 
 	$j(document).on("click",".pageOfType",function(){
 		
 			var pageNo = $j(this).text();
@@ -176,10 +236,60 @@
 					
 					});
 				}
-			}else {
-				alert("옵션을 선택하세요.")
+			}
+		
+	});
+	
+	$j(document).on("click",".pageOfKeyword",function(){
+		var pageNo = $j(this).text();
+		console.log(pageNo)
+		var searchInput = $j('#searchInput').val();
+		console.log(searchInput)
+		
+		if(searchInput == "" || searchInput == null){
+			alert("키워드를 입력하세요.")
+			return false;
+		};
+		
+		$j.ajax({
+			type : "get",
+			url : "/board/boardListOfKeyword.do",
+			dataType : "text",
+			data : {
+				"pageNo" : pageNo,
+				"searchInput" : searchInput
+			},
+			success : function(data){
+				$j("#boardTable").html("");
+				data = JSON.parse(data);
+				
+				var msg1 = a();
+				$j("#boardTable").append(msg1);
+				for(var i=0;i<data.boardList.length; i++){
+					var codeName = data.boardList[i].codeName;
+					var boardNum = data.boardList[i].boardNum;
+					var boardType = data.boardList[i].boardType;
+					var pageNo = data.pageNo;
+					var boardTitle = data.boardList[i].boardTitle;
+					var msg2 = b(codeName,boardNum,boardType,pageNo,boardTitle);
+					$j("#boardTable").append(msg2);
+				}
+				
+				$j("#totalpage").html("");
+				var totalpage = data.totalpage;
+				for(var i=1; i<totalpage+1; i++){
+					var msg1 = "<a class='pageOfKeyword' href='#'>"+i+"</a> "
+					$j("#totalpage").append(msg1);
+				}
+				
+				
+				$j("#totalCnt").html("");
+				var totalCnt = data.totalCnt;
+				var msg2 = "total : "+totalCnt;
+				$j("#totalCnt").append(msg2);
 			}
 			
+		});
 		
 	});
 	
@@ -189,16 +299,22 @@
 <table  align="center">
 	<tr>
 		<td align="left">
-		<c:if test="${not empty login}">
-			${login.userId}
-		</c:if>
-		<c:if test="${empty login}">
-			<a href="/user/loginUI.do">login</a>
-			<a href ="/user/userInsertUI.do">join</a>
-		</c:if>
+			<c:if test="${not empty login}">
+				${login.userId}
+			</c:if>
+			<c:if test="${empty login}">
+				<a href="/user/loginUI.do">login</a>
+				<a href ="/user/userInsertUI.do">join</a>
+			</c:if>
 		</td>
 		<td id="totalCnt" align="right">
 			total : ${totalCnt}
+		</td>
+	</tr>
+	<tr>
+		<td align="right">
+			<input type="text" name="searchInput" id='searchInput'>
+			<input type='button' id='searchButton' value='조회'>
 		</td>
 	</tr>
 	<tr>

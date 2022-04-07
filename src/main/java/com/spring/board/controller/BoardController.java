@@ -201,6 +201,56 @@ public class BoardController {
 		return entity;
 	}
 	
+	@RequestMapping(value = "/board/boardListOfKeyword.do", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> boardListOfKeyword(Locale locale
+			,Model model,int pageNo, String searchInput) throws Exception{
+		ResponseEntity<Map<String, Object>> entity = null;
+		try {
+			List<BoardVo> boardList = new ArrayList<BoardVo>();
+			Map<String, Object> map = new HashMap<String, Object>();
+			
+			int page = 1;
+			int totalCntOfKeyword = 0;
+			int totalpageOfKeyword = 0;
+			String type = "";
+			
+			if(pageNo == 0){
+				pageNo = page;
+			}
+			map.put("pageNo", pageNo);
+			map.put("searchInput", searchInput);
+			
+			boardList = boardService.SelectBoardListOfKeyword(map);
+			
+			totalCntOfKeyword += boardService.selectBoardCntOfKeyword(searchInput);
+
+			if(totalCntOfKeyword%10 == 0) {
+				totalpageOfKeyword = totalCntOfKeyword/10;
+			}else {
+				totalpageOfKeyword = (totalCntOfKeyword/10)+1;
+			}
+			
+			model.addAttribute("boardList", boardList);
+			model.addAttribute("totalCnt", totalCntOfKeyword);
+			model.addAttribute("pageNo", page);
+			model.addAttribute("totalpage", totalpageOfKeyword);
+			model.addAttribute("hiddenValue", type);
+
+			map.put("boardList", boardList);
+			map.put("totalCnt", totalCntOfKeyword);
+			map.put("pageNo", page);
+			map.put("totalpage", totalpageOfKeyword);
+			map.put("hiddenValue", type);
+			
+			entity = new ResponseEntity<Map<String, Object>>(map, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			entity = new ResponseEntity<Map<String, Object>>(HttpStatus.BAD_REQUEST);
+		}
+
+		return entity;
+	}
+	
 	
 	@RequestMapping(value = "/board/{boardType}/{boardNum}/boardView.do", method = RequestMethod.GET)
 	public String boardView(Locale locale, Model model

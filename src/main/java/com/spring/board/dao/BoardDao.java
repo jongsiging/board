@@ -35,6 +35,10 @@ public interface BoardDao {
 
 	public int boardInsert(List<BoardVo> param);
 
+	public List<BoardVo> SelectBoardListOfKeyword(Map<String, Object> map);
+
+	public int selectBoardCntOfKeyword(String searchInput);
+
 //	public int selectBoardCntOfType(String boardType);
 
 }

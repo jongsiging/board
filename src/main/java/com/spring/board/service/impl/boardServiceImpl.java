@@ -127,6 +127,25 @@ public class boardServiceImpl implements boardService{
 		return boardDao.selectBoardCntOfType(hiddenValue);
 	}
 
+	@Override
+	public List<BoardVo> SelectBoardListOfKeyword(Map<String, Object> map) {
+		List<BoardVo> list = boardDao.SelectBoardListOfKeyword(map);
+		
+		for(int i=0;i<list.size(); i++) {
+			String codeType = list.get(i).getBoardType();
+			ComCodeVO comCodeVO = boardDao.getCodeName(codeType);
+			list.get(i).setCodeName(comCodeVO.getCodeName());
+		}
+		
+		return list;
+	}
+
+	@Override
+	public int selectBoardCntOfKeyword(String searchInput) {
+		// TODO Auto-generated method stub
+		return boardDao.selectBoardCntOfKeyword(searchInput);
+	}
+
 //	@Override
 //	public int boardInsert(List<BoardVo> param) {
 //		// TODO Auto-generated method stub

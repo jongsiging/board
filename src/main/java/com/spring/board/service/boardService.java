@@ -35,6 +35,10 @@ public interface boardService {
 
 	public int selectBoardCntOfType(String[] hiddenValue);
 
+	public List<BoardVo> SelectBoardListOfKeyword(Map<String, Object> map);
+
+	public int selectBoardCntOfKeyword(String searchInput);
+
 //	public int boardInsert(List<BoardVo> param);
 
 }

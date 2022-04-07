@@ -4,6 +4,7 @@ public class PageVo {
 	
 	private int pageNo = 0;
 	private String[] hiddenValue;
+	private String searchInput;
 	
 	public int getPageNo() {
 		return pageNo;
@@ -20,7 +21,13 @@ public class PageVo {
 	public void setHiddenValue(String[] hiddenValue) {
 		this.hiddenValue = hiddenValue;
 	}
-	
-	
+
+	public String getSearchInput() {
+		return searchInput;
+	}
+
+	public void setSearchInput(String searchInput) {
+		this.searchInput = searchInput;
+	}
 	
 }
